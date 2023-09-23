@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(11, 1fr);
+        gap: 0px;
+        margin-right: 0.5in;
+        width: 8in;
+        height: 11in;
+      }
+
+      .grid > .box {
+        border: 1px solid black;
+        width: 1in;
+        height: 1in;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+    MAKE A 8 BY 11 GRID THAT FITS THE PAPER AND HAS A 0.5 INCH MARGIN ON THE RIGHT HAND SIDE 
+    --->
+    <div class="grid"></div>
+    <script>
+      // YOUR CODE GOES HERE
+      const grid = document.querySelector(".grid")
+      for (let i = 0; i < 8 * 10; i++) {
+        const div = document.createElement("div")
+        div.classList.add("box")
+        grid.appendChild(div)
+      }
+    </script>
+  </body>
+</html>
