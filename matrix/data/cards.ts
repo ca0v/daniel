@@ -219,6 +219,35 @@ const SiloCard = new GenericCard({
   movement: null,
   attacks: [
     {
+      name: "Cow",
+      range: {
+        distance: 1,
+        direction: "All",
+      },
+      damage: {
+        type: "summon",
+        name: "Cow",
+        health: {
+          type: "d8",
+          bonus: 2,
+        },
+        movement: {
+          distance: 1,
+          direction: "All",
+        },
+        attacks: [
+          {
+            name: "Stomp",
+            range: {
+              distance: 1,
+              direction: "Adjacent",
+            },
+            damage: 2,
+          },
+        ],
+      },
+    },
+    {
       name: "Horse",
       range: {
         distance: 1,
@@ -251,4 +280,9 @@ const SiloCard = new GenericCard({
       },
     },
   ],
+  passive:
+    "The Silo gets discarded after 3 turns and can only be used once per turn.",
+  abilities: null,
+  uses: 0,
+  upgrades: [],
 })
