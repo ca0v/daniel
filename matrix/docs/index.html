@@ -8,6 +8,7 @@
         margin: 0;
         padding: 0;
       }
+
       .grid {
         display: grid;
         grid-template-columns: repeat(8, 1fr);
@@ -23,6 +24,67 @@
         width: 1in;
         height: 1in;
         margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 4rem;
+        font-family: Georgia, "Times New Roman", Times, serif;
+        font-weight: 400;
+        box-sizing: border-box;
+      }
+
+      .grid > .box[data-row="5"] {
+        background-color: #f0f0f0;
+      }
+
+      .grid > .box[data-row="1"],
+      .grid > .box[data-row="8"] {
+        border-bottom: 3px solid black;
+      }
+
+      .grid > .box[data-row="0"][data-col="2"],
+      .grid > .box[data-row="0"][data-col="3"],
+      .grid > .box[data-row="0"][data-col="4"],
+      .grid > .box[data-row="0"][data-col="5"] {
+        background-color: #f0f0f0;
+        border-bottom: 3px solid black;
+      }
+      .grid > .box[data-row="10"][data-col="2"],
+      .grid > .box[data-row="10"][data-col="3"],
+      .grid > .box[data-row="10"][data-col="4"],
+      .grid > .box[data-row="10"][data-col="5"] {
+        background-color: #f0f0f0;
+        border-top: 3px solid black;
+        font-size: 2rem;
+      }
+
+      .grid > .box[data-row="0"][data-col="2"] {
+        border-left: 5px solid black;
+      }
+
+      .grid > .box[data-row="0"][data-col="5"] {
+        border-right: 5px solid black;
+      }
+
+      .grid > .box[data-row="10"][data-col="2"] {
+        border-left: 5px solid black;
+      }
+
+      .grid > .box[data-row="10"][data-col="5"] {
+        border-right: 5px solid black;
+      }
+
+      .trademark {
+        position: absolute;
+        top: 10in;
+        left: 7.6in;
+        transform: rotate(270deg);
+        font-size: 2rem;
+        border-right: 2px solid black;
+        border-left: 2px solid black;
+        border-top: 2px solid black;
+        border-bottom: 2px solid black;
+        /* underline text */
       }
     </style>
   </head>
@@ -31,14 +93,30 @@
     MAKE A 8 BY 11 GRID THAT FITS THE PAPER AND HAS A 0.5 INCH MARGIN ON THE RIGHT HAND SIDE 
     --->
     <div class="grid"></div>
+    <span class="trademark">MATRIX</span>
     <script>
-      // YOUR CODE GOES HERE
-      const grid = document.querySelector(".grid")
-      for (let i = 0; i < 8 * 10; i++) {
-        const div = document.createElement("div")
-        div.classList.add("box")
-        grid.appendChild(div)
+      function setBoxText(row, col, text) {
+        const box = document.querySelector(
+          `[data-row="${row}"][data-col="${col}"]`
+        )
+        if (!box) throw new Error(`No box at row ${row} col ${col}`)
+        box.innerHTML = text
       }
+
+      const grid = document.querySelector(".grid")
+      for (let row = 0; row < 11; row++) {
+        for (let col = 0; col < 8; col++) {
+          const div = document.createElement("div")
+          div.classList.add("box")
+          grid.appendChild(div)
+          div.dataset.row = row
+          div.dataset.col = col
+        }
+      }
+
+      "CENTER".split("").forEach((letter, index) => {
+        setBoxText(5, index + 1, letter)
+      })
     </script>
   </body>
 </html>
