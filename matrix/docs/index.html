@@ -28,8 +28,8 @@
         justify-content: center;
         align-items: center;
         font-size: 4rem;
-        font-family: Georgia, "Times New Roman", Times, serif;
-        font-weight: 400;
+        font-family: "Times New Roman", Times, serif;
+        color: #000;
         box-sizing: border-box;
       }
 
@@ -74,17 +74,27 @@
         border-right: 5px solid black;
       }
 
+      .board {
+        position: relative;
+        width: 8.5in;
+        height: 11in;
+        border: 1px solid red;
+      }
+
       .trademark {
         position: absolute;
-        top: 10in;
-        left: 7.6in;
-        transform: rotate(270deg);
+        bottom: 0in;
+        right: 0in;
         font-size: 2rem;
         border-right: 2px solid black;
         border-left: 2px solid black;
         border-top: 2px solid black;
         border-bottom: 2px solid black;
-        /* underline text */
+      }
+
+      .trademark > .box {
+        display: flex;
+        justify-content: center;
       }
     </style>
   </head>
@@ -92,8 +102,9 @@
     <!--
     MAKE A 8 BY 11 GRID THAT FITS THE PAPER AND HAS A 0.5 INCH MARGIN ON THE RIGHT HAND SIDE 
     --->
-    <div class="grid"></div>
-    <span class="trademark">MATRIX</span>
+    <div class="board">
+      <div class="grid"></div>
+    </div>
     <script>
       function setBoxText(row, col, text) {
         const box = document.querySelector(
@@ -114,7 +125,7 @@
         }
       }
 
-      "CENTER".split("").forEach((letter, index) => {
+      "MATRIX".split("").forEach((letter, index) => {
         setBoxText(5, index + 1, letter)
       })
     </script>
