@@ -78,4 +78,23 @@ const ScarecrowCard = new GenericCard({
   name: "Scarecrow",
   rarity: "Common",
   health: 6,
+  movement: {
+    distance: 1,
+    direction: "Adjacent",
+  },
+  attacks: [
+    {
+      name: "Crow Launch",
+      range: {
+        distance: 1,
+        direction: "Adjacent",
+      },
+      damage: 1,
+      notes: "",
+    },
+  ],
+  passive: "Enemy cards within 1 space the Scarecrow have -1 Health",
+  abilities: "none",
+  uses: 0,
+  upgrades: [],
 })
