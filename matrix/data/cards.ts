@@ -21,48 +21,39 @@ type Movement = {
   direction: RangeDirection
 }
 
+type DamageBonus = {
+  type: Dice | Array<Dice>
+  bonus: number
+}
+
 type Damage =
   | number
   | {
-      type: "summon"
-      name: string
-      health: Health
-      movement: Movement
-      attacks: Array<Attack>
-    }
-  | {
-      type: Dice | Array<Dice>
-      bonus: number
-    }
+    type: "summon"
+    name: string
+    health: Health
+    movement: Movement
+    attacks: Array<Attack>
+  }
+  | DamageBonus
 
 type Formula = string
 
 type Health =
   | number
   | Formula
-  | {
-      type: Dice | Array<Dice>
-      bonus: number
-    }
+  | DamageBonus
 
 class GenericCard {
-  name: string
-
-  rarity: Rarity
-
-  health: Health
-
-  movement: null | Movement
-
-  attacks: null | Array<Attack>
-
-  passive: null | string
-
-  abilities: null | string | Attack
-
-  uses: number
-
-  upgrades: Array<{ with: string; become: string }>
+  name?: string
+  rarity?: Rarity
+  health?: Health
+  movement?: null | Movement
+  attacks?: null | Array<Attack>
+  passive?: null | string
+  abilities?: null | string | Attack
+  uses?: number
+  upgrades?: Array<{ with: string; become: string }>
 
   constructor(state: Partial<GenericCard>) {
     Object.assign(this, state)
@@ -87,12 +78,15 @@ const FarmerCard = new GenericCard({
         distance: 1,
         direction: "Adjacent",
       },
-      damage: 1,
+      damage: {
+        type: "d4",
+        bonus: 0
+      },
     },
   ],
   passive: null,
 
-  abilities:    {
+  abilities: {
     name: "Cow",
     range: {
       distance: 1,
@@ -314,3 +308,76 @@ const SiloCard = new GenericCard({
   uses: 0,
   upgrades: [],
 })
+
+class CardPrinter {
+
+  private dom: HTMLElement;
+
+  constructor() {
+    const dom = document.createElement("div")
+    document.body.insertBefore(dom, document.body.firstElementChild)  
+    this.dom = dom;
+  }
+
+  private printHealth(health?: Health) {
+    if (!health) return "None";
+    if (typeof health == "string") return health;
+    if (typeof health == "number") return health;
+    const typedHealth = health as {type: string; bonus: number};
+    if (typedHealth.type) {
+      return this.printDamageBonus(health)
+    }
+    return "todo";
+  }
+
+  printMovement(movement?: Movement) {
+    if (!movement) return "None";
+    return `${movement.direction}:${movement.distance}`
+  }
+
+  printDamageBonus(dice?: DamageBonus) {
+    if (!dice) return "None";
+    if (!dice.bonus) return dice.type;
+    return `${dice.type}+${dice.bonus}`;
+  }
+
+  printDamage(damage?: Damage) {
+    if (!damage) return "None";
+    if (typeof damage === "number") return damage;
+    switch (damage.type) {
+      case "summon":
+        return `TODO`;
+        default:
+          return this.printDamageBonus(damage);
+    }
+  }
+
+  printAttack(attack?: Attack) {
+    if (!attack) return "None"
+    const damage = this.printDamage(attack.damage);
+    return `
+    ${attack.name}, 
+    ${attack.range.direction}: ${attack.range.distance} 
+    ${attack.notes||""}
+    <br/>Damage: ${damage}`
+  }
+
+  print(card: GenericCard) {
+    const health = this.printHealth(card.health);
+    const movement = this.printMovement(card.movement!)
+    const attack = card.attacks?.map(attack => this.printAttack(attack)).join("+")
+    const template = `
+    <b>${card.name}</b>
+    <br/>Rarity: ${card.rarity}
+    <br/>Health: ${health}
+    <br/>Movement: ${movement}
+    <br/>Attack: ${attack}`
+    this.dom.innerHTML = template
+  }
+
+
+}
+
+export function print() {
+  new CardPrinter().print(FarmerCard);
+}
