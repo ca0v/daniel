@@ -58,7 +58,7 @@ class GenericCard {
 
   passive: null | string
 
-  abilities: null | string
+  abilities: null | string | Attack
 
   uses: number
 
@@ -91,8 +91,36 @@ const FarmerCard = new GenericCard({
     },
   ],
   passive: null,
-  abilities:
-    "Call: Summon Chicken in an Adjacent space with Health: 1d4, Movement: 3 All, Attack: Peck: 1",
+
+  abilities:    {
+    name: "Cow",
+    range: {
+      distance: 1,
+      direction: "All",
+    },
+    damage: {
+      type: "summon",
+      name: "Cow",
+      health: {
+        type: "d8",
+        bonus: 2,
+      },
+      movement: {
+        distance: 1,
+        direction: "All",
+      },
+      attacks: [
+        {
+          name: "Stomp",
+          range: {
+            distance: 1,
+            direction: "Adjacent",
+          },
+          damage: 2,
+        },
+      ],
+    },
+  },
   uses: 1,
   upgrades: [{ with: "Tractor", become: "Tractor Rider" }],
 })
