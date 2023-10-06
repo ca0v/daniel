@@ -1,3 +1,5 @@
+const NONE = 'none';
+
 type Attack = {
   name: string
   range: Movement
@@ -139,7 +141,7 @@ const ScarecrowCard = new GenericCard({
       damage: 1,
     },
   ],
-  passive: "Enemy cards within 1 space the Scarecrow have -1 Health",
+  passive: "Enemy cards within 1 space the Scarecrow can not Attack or use an Ability",
   ability: null,
   uses: 0,
   upgrades: [],
@@ -322,7 +324,7 @@ class CardPrinter {
   }
 
   private printHealth(health?: Health) {
-    if (!health) return "none";
+    if (!health) return NONE;
     if (typeof health == "string") return health;
     if (typeof health == "number") return health;
     const typedHealth = health as {type: string; bonus: number};
@@ -365,6 +367,7 @@ class CardPrinter {
   }
   
   printUpgrades(upgrades?: Array<Upgrade>) {
+    if (!upgrades?.length) return "none";
     return upgrades?.map(upgrade => `${upgrade.with} → ${upgrade.become}`)
   }
 
@@ -375,10 +378,15 @@ class CardPrinter {
     const ability = this.printAbility(card.ability);
     const upgrades = this.printUpgrades(card.upgrades);
 
+    const cardClass = card.rarity?.includes("+") ? "plus": "standard";
+
     const template = `
     <div class='card'>
-      <div class='card-name'>${card.name}</div>
-      <div class='rarity ${card.rarity}'><span class="bold">Rarity</span> ${card.rarity}</div>
+      <div class='card-name ${cardClass}'>${card.name}</div>
+      <div class='rarity ${card.rarity}'>
+        <span class="bold">Rarity</span>
+        <span class="value">${card.rarity}</span>
+      </div>
       <div class='health'><span class="bold">Health</span>${health}</div>
       <div class='movement'><span class="bold">Movement</span> ${movement}</div>
       <div class='attack'><span class="bold">Attack</span>${attack}</div>
@@ -387,7 +395,8 @@ class CardPrinter {
       <div class='uses'><span class="bold">Uses</span>${card.uses}</div>
       <div class='upgrades'><span class="bold">Upgrades</span>${upgrades}</div>
     </div>`
-    this.dom.innerHTML = template
+
+    this.dom.append(asDom(template));
   }
 
   printAbility(abilities: string | Attack | null | undefined) {
@@ -399,6 +408,19 @@ class CardPrinter {
 
 }
 
-export function print() {
-  new CardPrinter().print(FarmerCard);
+export const farmPack = [
+FarmerCard, ScarecrowCard, JackOLanternCard, 
+SiloCard, TractorCard, TractorRiderCard
+]
+
+export function print(cards = farmPack) {
+  const printer = new CardPrinter();
+  cards.forEach(c => printer.print(c));
+}
+
+
+function asDom(html: string) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.firstElementChild as HTMLElement;
 }

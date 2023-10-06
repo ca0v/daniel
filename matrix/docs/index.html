@@ -110,6 +110,12 @@
 
       .card {
         font-family: Georgia, 'Times New Roman', Times, serif;  
+        border-bottom: 1px dashed #0004;
+        border-right: 1px dashed #0004;
+        padding: 1rem;
+        padding-left: 2rem;
+        width: 20rem;
+        height: 28rem;
       }
 
 
@@ -117,14 +123,29 @@
         font-family: Georgia, 'Times New Roman', Times, serif;
         font-size: 1.5rem;
         font-weight: 1000;
+        text-align: center;
+        background-color: #0002;
+        padding: 0.25rem;
+      }
+
+      .card-name.plus {
+        color: red;
+      }
+
+      .card-name.plus::after {
+        content: " +";
       }
 
       .rarity {
         font-family: Georgia, 'Times New Roman', Times, serif;  
       }
 
-      .rarity.Common {
-        color: white;
+      .rarity > .value {
+        color: green;
+      }
+
+      .rarity.Common > .value {
+        color: gray;
       }
 
 </style>
