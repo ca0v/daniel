@@ -9,6 +9,17 @@
         padding: 0;
       }
 
+      .bold {
+        display: block;
+        font-weight: 1000;
+        width: 6rem;
+        margin-top: 0.5rem;
+      }
+
+      .bold::after {
+        content: ""
+      }
+
       .grid {
         display: grid;
         grid-template-columns: repeat(8, 1fr);
@@ -96,12 +107,29 @@
         display: flex;
         justify-content: center;
       }
-    </style>
+
+      .card {
+        font-family: Georgia, 'Times New Roman', Times, serif;  
+      }
+
+
+      .card-name {
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-size: 1.5rem;
+        font-weight: 1000;
+      }
+
+      .rarity {
+        font-family: Georgia, 'Times New Roman', Times, serif;  
+      }
+
+      .rarity.Common {
+        color: white;
+      }
+
+</style>
   </head>
   <body>
-    <!--
-    MAKE A 8 BY 11 GRID THAT FITS THE PAPER AND HAS A 0.5 INCH MARGIN ON THE RIGHT HAND SIDE 
-    --->
     <div class="board">
       <div class="grid"></div>
     </div>

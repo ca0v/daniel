@@ -44,6 +44,8 @@ type Health =
   | Formula
   | DamageBonus
 
+type Upgrade = { with: string; become: string };
+
 class GenericCard {
   name?: string
   rarity?: Rarity
@@ -51,9 +53,9 @@ class GenericCard {
   movement?: null | Movement
   attacks?: null | Array<Attack>
   passive?: null | string
-  abilities?: null | string | Attack
+  ability?: null | string | Attack
   uses?: number
-  upgrades?: Array<{ with: string; become: string }>
+  upgrades?: Array<Upgrade>
 
   constructor(state: Partial<GenericCard>) {
     Object.assign(this, state)
@@ -86,7 +88,7 @@ const FarmerCard = new GenericCard({
   ],
   passive: null,
 
-  abilities: {
+  ability: {
     name: "Cow",
     range: {
       distance: 1,
@@ -138,7 +140,7 @@ const ScarecrowCard = new GenericCard({
     },
   ],
   passive: "Enemy cards within 1 space the Scarecrow have -1 Health",
-  abilities: null,
+  ability: null,
   uses: 0,
   upgrades: [],
 })
@@ -165,7 +167,7 @@ const TractorCard = new GenericCard({
     },
   ],
   passive: "Can be pushed in any direction by a Friendly Card",
-  abilities: null,
+  ability: null,
   uses: 0,
   upgrades: [{ with: "Farmer", become: "Tractor Rider" }],
 })
@@ -203,7 +205,7 @@ const TractorRiderCard = new GenericCard({
     },
   ],
   passive: null,
-  abilities: "Repair: Heal up to 3 Health",
+  ability: "Repair: Heal up to 3 Health",
   uses: 2,
   upgrades: [],
 })
@@ -230,7 +232,7 @@ const JackOLanternCard = new GenericCard({
     },
   ],
   passive: null,
-  abilities: null,
+  ability: null,
   uses: 0,
 })
 
@@ -304,7 +306,7 @@ const SiloCard = new GenericCard({
   ],
   passive:
     "The Silo gets discarded after 3 turns and can only be used once per turn.",
-  abilities: null,
+  ability: null,
   uses: 0,
   upgrades: [],
 })
@@ -320,7 +322,7 @@ class CardPrinter {
   }
 
   private printHealth(health?: Health) {
-    if (!health) return "None";
+    if (!health) return "none";
     if (typeof health == "string") return health;
     if (typeof health == "number") return health;
     const typedHealth = health as {type: string; bonus: number};
@@ -331,48 +333,67 @@ class CardPrinter {
   }
 
   printMovement(movement?: Movement) {
-    if (!movement) return "None";
+    if (!movement) return "none";
     return `${movement.direction}:${movement.distance}`
   }
 
   printDamageBonus(dice?: DamageBonus) {
-    if (!dice) return "None";
+    if (!dice) return "none";
     if (!dice.bonus) return dice.type;
     return `${dice.type}+${dice.bonus}`;
   }
 
   printDamage(damage?: Damage) {
-    if (!damage) return "None";
-    if (typeof damage === "number") return damage;
+    if (!damage) return "none";
+    if (typeof damage === "number") return `Damage: ${damage}`;
     switch (damage.type) {
       case "summon":
-        return `TODO`;
+        return `Summon`;
         default:
-          return this.printDamageBonus(damage);
+          return `Damage: ${this.printDamageBonus(damage)}`;
     }
   }
 
   printAttack(attack?: Attack) {
-    if (!attack) return "None"
+    if (!attack) return "none"
     const damage = this.printDamage(attack.damage);
     return `
     ${attack.name}, 
-    ${attack.range.direction}: ${attack.range.distance} 
-    ${attack.notes||""}
-    <br/>Damage: ${damage}`
+    ${attack.range.direction}: ${attack.range.distance},
+    ${damage} 
+    ${attack.notes ? ", " + attack.notes:""}`
+  }
+  
+  printUpgrades(upgrades?: Array<Upgrade>) {
+    return upgrades?.map(upgrade => `${upgrade.with} → ${upgrade.become}`)
   }
 
   print(card: GenericCard) {
     const health = this.printHealth(card.health);
     const movement = this.printMovement(card.movement!)
     const attack = card.attacks?.map(attack => this.printAttack(attack)).join("+")
+    const ability = this.printAbility(card.ability);
+    const upgrades = this.printUpgrades(card.upgrades);
+
     const template = `
-    <b>${card.name}</b>
-    <br/>Rarity: ${card.rarity}
-    <br/>Health: ${health}
-    <br/>Movement: ${movement}
-    <br/>Attack: ${attack}`
+    <div class='card'>
+      <div class='card-name'>${card.name}</div>
+      <div class='rarity ${card.rarity}'><span class="bold">Rarity</span> ${card.rarity}</div>
+      <div class='health'><span class="bold">Health</span>${health}</div>
+      <div class='movement'><span class="bold">Movement</span> ${movement}</div>
+      <div class='attack'><span class="bold">Attack</span>${attack}</div>
+      <div class='passive'><span class="bold">Passive</span>${card.passive||"none"}</div>
+      <div class='ability'><span class="bold">Ability</span>${ability}</div>
+      <div class='uses'><span class="bold">Uses</span>${card.uses}</div>
+      <div class='upgrades'><span class="bold">Upgrades</span>${upgrades}</div>
+    </div>`
     this.dom.innerHTML = template
+  }
+
+  printAbility(abilities: string | Attack | null | undefined) {
+    if (!abilities) return "none";
+    if (typeof abilities === "string") return abilities;
+    return this.printAttack(abilities);
   }
 
 
