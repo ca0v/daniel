@@ -1,3 +1,5 @@
+const NONE = 'none';
+
 type Attack = {
   name: string
   range: Movement
@@ -14,10 +16,10 @@ type Rarity =
   | "Legendary"
   | "Mythic"
   | "Uncommon+"
-type RangeDirection = "Adjacent" | "Diagonal" | "Forward" | "Touch" | "All"
+type RangeDirection = "Orthogonal" | "Diagonal" | "Forward" | "Adjacent"
 
 type Movement = {
-  distance: number
+  distance: number | "Touch"
   direction: RangeDirection
 }
 
@@ -71,14 +73,14 @@ const FarmerCard = new GenericCard({
   },
   movement: {
     distance: 1,
-    direction: "Adjacent",
+    direction: "Orthogonal",
   },
   attacks: [
     {
       name: "Pitchfork",
       range: {
         distance: 1,
-        direction: "Adjacent",
+        direction: "Orthogonal",
       },
       damage: {
         type: "d4",
@@ -89,28 +91,28 @@ const FarmerCard = new GenericCard({
   passive: null,
 
   ability: {
-    name: "Cow",
+    name: "Chicken",
     range: {
       distance: 1,
-      direction: "All",
+      direction: "Adjacent",
     },
     damage: {
       type: "summon",
-      name: "Cow",
+      name: "Chicken",
       health: {
-        type: "d8",
-        bonus: 2,
+        type: "d4",
+        bonus: 1,
       },
       movement: {
-        distance: 1,
-        direction: "All",
+        distance: 2,
+        direction: "Adjacent",
       },
       attacks: [
         {
-          name: "Stomp",
+          name: "Peck",
           range: {
             distance: 1,
-            direction: "Adjacent",
+            direction: "Diagonal",
           },
           damage: 2,
         },
@@ -127,19 +129,19 @@ const ScarecrowCard = new GenericCard({
   health: 6,
   movement: {
     distance: 1,
-    direction: "Adjacent",
+    direction: "Orthogonal",
   },
   attacks: [
     {
       name: "Crow Launch",
       range: {
         distance: 1,
-        direction: "Adjacent",
+        direction: "Orthogonal",
       },
       damage: 1,
     },
   ],
-  passive: "Enemy cards within 1 space the Scarecrow have -1 Health",
+  passive: "Enemy cards within 1 space the Scarecrow can not Attack or use an Ability",
   ability: null,
   uses: 0,
   upgrades: [],
@@ -157,8 +159,8 @@ const TractorCard = new GenericCard({
     {
       name: "Ram",
       range: {
-        distance: 1,
-        direction: "Touch",
+        distance: 0,
+        direction: "Orthogonal",
       },
       damage: {
         type: "d4",
@@ -178,14 +180,14 @@ const TractorRiderCard = new GenericCard({
   health: "Max Tractor Health",
   movement: {
     distance: 1,
-    direction: "Adjacent",
+    direction: "Orthogonal",
   },
   attacks: [
     {
       name: "Pitchfork",
       range: {
         distance: 1,
-        direction: "Adjacent",
+        direction: "Orthogonal",
       },
       damage: {
         type: "d4",
@@ -196,7 +198,7 @@ const TractorRiderCard = new GenericCard({
       name: "Ram",
       range: {
         distance: 1,
-        direction: "Touch",
+        direction: "Orthogonal",
       },
       damage: {
         type: "d4",
@@ -212,9 +214,9 @@ const TractorRiderCard = new GenericCard({
 
 const JackOLanternCard = new GenericCard({
   name: "Jack-O-Lantern",
-  rarity: "Common",
+  rarity: "Uncommon",
   health: {
-    type: "d6",
+    type: "d4",
     bonus: 0,
   },
   movement: null,
@@ -223,7 +225,7 @@ const JackOLanternCard = new GenericCard({
       name: "Fire Stream",
       range: {
         distance: 3,
-        direction: "All",
+        direction: "Adjacent",
       },
       damage: {
         type: "d8",
@@ -246,7 +248,7 @@ const SiloCard = new GenericCard({
       name: "Cow",
       range: {
         distance: 1,
-        direction: "All",
+        direction: "Adjacent",
       },
       damage: {
         type: "summon",
@@ -257,14 +259,14 @@ const SiloCard = new GenericCard({
         },
         movement: {
           distance: 1,
-          direction: "All",
+          direction: "Adjacent",
         },
         attacks: [
           {
             name: "Stomp",
             range: {
               distance: 1,
-              direction: "Adjacent",
+              direction: "Orthogonal",
             },
             damage: 2,
           },
@@ -275,7 +277,7 @@ const SiloCard = new GenericCard({
       name: "Horse",
       range: {
         distance: 1,
-        direction: "All",
+        direction: "Adjacent",
       },
       damage: {
         type: "summon",
@@ -286,14 +288,14 @@ const SiloCard = new GenericCard({
         },
         movement: {
           distance: 2,
-          direction: "All",
+          direction: "Adjacent",
         },
         attacks: [
           {
             name: "Kick",
             range: {
               distance: 1,
-              direction: "All",
+              direction: "Adjacent",
             },
             damage: {
               type: "d4",
@@ -315,14 +317,12 @@ class CardPrinter {
 
   private dom: HTMLElement;
 
-  constructor() {
-    const dom = document.createElement("div")
-    document.body.insertBefore(dom, document.body.firstElementChild)  
+  constructor(dom: HTMLElement) {
     this.dom = dom;
   }
 
   private printHealth(health?: Health) {
-    if (!health) return "none";
+    if (!health) return NONE;
     if (typeof health == "string") return health;
     if (typeof health == "number") return health;
     const typedHealth = health as {type: string; bonus: number};
@@ -333,7 +333,7 @@ class CardPrinter {
   }
 
   printMovement(movement?: Movement) {
-    if (!movement) return "none";
+    if (!movement) return NONE;
     return `${movement.direction}:${movement.distance}`
   }
 
@@ -348,37 +348,55 @@ class CardPrinter {
     if (typeof damage === "number") return `Damage: ${damage}`;
     switch (damage.type) {
       case "summon":
-        return `Summon`;
+        return `${this.printSummon(damage)}`;
         default:
           return `Damage: ${this.printDamageBonus(damage)}`;
     }
   }
+  printSummon(damage: Damage) {
+    if (typeof damage == "number") throw "expecting summon";
+    if (damage.type !== "summon") throw "expect a summon";
+    const health = this.printHealth(damage.health);
+    const movement = this.printMovement(damage.movement);
+    const attack = this.printAttack(damage.attacks);
+    return `<br/>Health: ${health}, Movement: ${movement}, Attack: ${attack},`
+  }
 
-  printAttack(attack?: Attack) {
+  printAttack(attack?: Attack | Attack[]): string {    
     if (!attack) return "none"
+    if (Array.isArray(attack)) {
+      return attack.map(a => this.printAttack(a)).join("</br>")
+    } else {
     const damage = this.printDamage(attack.damage);
     return `
-    ${attack.name}, 
+    <i>${attack.name}</i>, 
     ${attack.range.direction}: ${attack.range.distance},
     ${damage} 
     ${attack.notes ? ", " + attack.notes:""}`
+    }
   }
   
   printUpgrades(upgrades?: Array<Upgrade>) {
+    if (!upgrades?.length) return "none";
     return upgrades?.map(upgrade => `${upgrade.with} → ${upgrade.become}`)
   }
 
   print(card: GenericCard) {
     const health = this.printHealth(card.health);
     const movement = this.printMovement(card.movement!)
-    const attack = card.attacks?.map(attack => this.printAttack(attack)).join("+")
+    const attack = this.printAttack(card.attacks||[]);
     const ability = this.printAbility(card.ability);
     const upgrades = this.printUpgrades(card.upgrades);
 
+    const cardClass = card.rarity?.includes("+") ? "plus": "standard";
+
     const template = `
     <div class='card'>
-      <div class='card-name'>${card.name}</div>
-      <div class='rarity ${card.rarity}'><span class="bold">Rarity</span> ${card.rarity}</div>
+      <div class='card-name ${cardClass}'>${card.name}</div>
+      <div class='rarity ${card.rarity}'>
+        <span class="bold">Rarity</span>
+        <span class="value">${card.rarity}</span>
+      </div>
       <div class='health'><span class="bold">Health</span>${health}</div>
       <div class='movement'><span class="bold">Movement</span> ${movement}</div>
       <div class='attack'><span class="bold">Attack</span>${attack}</div>
@@ -387,7 +405,8 @@ class CardPrinter {
       <div class='uses'><span class="bold">Uses</span>${card.uses}</div>
       <div class='upgrades'><span class="bold">Upgrades</span>${upgrades}</div>
     </div>`
-    this.dom.innerHTML = template
+
+    this.dom.append(asDom(template));
   }
 
   printAbility(abilities: string | Attack | null | undefined) {
@@ -399,6 +418,19 @@ class CardPrinter {
 
 }
 
-export function print() {
-  new CardPrinter().print(FarmerCard);
+export const farmPack = [
+FarmerCard, ScarecrowCard, JackOLanternCard, 
+SiloCard, TractorCard, TractorRiderCard
+]
+
+export function print(target:HTMLElement, cards = farmPack) {
+  const printer = new CardPrinter(target);
+  cards.forEach(c => printer.print(c));
+}
+
+
+function asDom(html: string) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.firstElementChild as HTMLElement;
 }
