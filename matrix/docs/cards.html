@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Home</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .bold {
+      display: block;
+      font-weight: 1000;
+      width: 6rem;
+      margin-top: 0.5rem;
+    }
+
+    .bold::after {
+      content: ""
+    }
+
+
+    .card {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      border-right: 1px dashed #0004;
+      border-bottom: 1px dashed #0004;
+      padding: 1rem;
+      width: 2.75in;
+      height: 5.25in;
+    }
+
+
+    .card-name {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      font-size: 1.5rem;
+      font-weight: 1000;
+      text-align: center;
+      background-color: #0002;
+      padding: 0.25rem;
+    }
+
+    .card-name.plus {
+      color: red;
+    }
+
+    .card-name.plus::after {
+      content: " +";
+    }
+
+    .rarity {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+
+    .rarity>.value {
+      color: green;
+    }
+
+    .rarity.Common>.value {
+      color: gray;
+    }
+
+    .cards {
+      width: 8.5in;
+      height: 11in;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import { print } from "../data/cards.js"
+    print(document.querySelector(".cards"));
+  </script>
+  <div class="cards"></div>
+</body>
+
+</html>
