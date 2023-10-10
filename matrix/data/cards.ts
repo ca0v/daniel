@@ -16,7 +16,15 @@ type Rarity =
   | "Legendary"
   | "Mythic"
   | "Uncommon+"
-type RangeDirection = "Orthogonal" | "Diagonal" | "Forward" | "Adjacent"
+
+  type RangeDirections = "←" | "↑" | "→" | "↓" | "↖" | "↗" | "↘" | "↙";
+  type RangeDirection = RangeDirections | Array<RangeDirections>;
+
+  const orthogonalRanges: RangeDirections[] = ["←", "↑", "→", "↓"];
+  const diagonalRanges: RangeDirections[] = ["↖", "↗", "↘", "↙"];
+  const adjacentRanges: RangeDirections[] = orthogonalRanges.concat(diagonalRanges);
+  const forwardRanges: RangeDirections[] = ["↑", "↖", "↗"];
+
 
 type Movement = {
   distance: number | "Touch"
@@ -73,14 +81,14 @@ const FarmerCard = new GenericCard({
   },
   movement: {
     distance: 1,
-    direction: "Orthogonal",
+    direction: orthogonalRanges,
   },
   attacks: [
     {
       name: "Pitchfork",
       range: {
         distance: 1,
-        direction: "Orthogonal",
+        direction: orthogonalRanges,
       },
       damage: {
         type: "d4",
@@ -94,7 +102,7 @@ const FarmerCard = new GenericCard({
     name: "Chicken",
     range: {
       distance: 1,
-      direction: "Adjacent",
+      direction: adjacentRanges,
     },
     damage: {
       type: "summon",
@@ -105,14 +113,14 @@ const FarmerCard = new GenericCard({
       },
       movement: {
         distance: 2,
-        direction: "Adjacent",
+        direction: adjacentRanges,
       },
       attacks: [
         {
           name: "Peck",
           range: {
             distance: 1,
-            direction: "Diagonal",
+            direction: diagonalRanges,
           },
           damage: 2,
         },
@@ -129,14 +137,14 @@ const ScarecrowCard = new GenericCard({
   health: 6,
   movement: {
     distance: 1,
-    direction: "Orthogonal",
+    direction: forwardRanges,
   },
   attacks: [
     {
       name: "Crow Launch",
       range: {
         distance: 1,
-        direction: "Orthogonal",
+        direction: orthogonalRanges,
       },
       damage: 1,
     },
@@ -160,7 +168,7 @@ const TractorCard = new GenericCard({
       name: "Ram",
       range: {
         distance: 0,
-        direction: "Orthogonal",
+        direction: orthogonalRanges,
       },
       damage: {
         type: "d4",
@@ -180,14 +188,14 @@ const TractorRiderCard = new GenericCard({
   health: "Max Tractor Health",
   movement: {
     distance: 1,
-    direction: "Orthogonal",
+    direction: orthogonalRanges,
   },
   attacks: [
     {
       name: "Pitchfork",
       range: {
         distance: 1,
-        direction: "Orthogonal",
+        direction: orthogonalRanges,
       },
       damage: {
         type: "d4",
@@ -197,13 +205,14 @@ const TractorRiderCard = new GenericCard({
     {
       name: "Ram",
       range: {
-        distance: 1,
-        direction: "Orthogonal",
+        distance: 0,
+        direction: orthogonalRanges,
       },
       damage: {
         type: "d4",
         bonus: 0,
       },
+      notes: "Pushes card back one space"
     },
   ],
   passive: null,
@@ -225,7 +234,7 @@ const JackOLanternCard = new GenericCard({
       name: "Fire Stream",
       range: {
         distance: 3,
-        direction: "Adjacent",
+        direction: adjacentRanges,
       },
       damage: {
         type: "d8",
@@ -248,7 +257,7 @@ const SiloCard = new GenericCard({
       name: "Cow",
       range: {
         distance: 1,
-        direction: "Adjacent",
+        direction: adjacentRanges,
       },
       damage: {
         type: "summon",
@@ -259,14 +268,14 @@ const SiloCard = new GenericCard({
         },
         movement: {
           distance: 1,
-          direction: "Adjacent",
+          direction: adjacentRanges,
         },
         attacks: [
           {
             name: "Stomp",
             range: {
               distance: 1,
-              direction: "Orthogonal",
+              direction: orthogonalRanges,
             },
             damage: 2,
           },
@@ -277,7 +286,7 @@ const SiloCard = new GenericCard({
       name: "Horse",
       range: {
         distance: 1,
-        direction: "Adjacent",
+        direction: adjacentRanges,
       },
       damage: {
         type: "summon",
@@ -288,14 +297,14 @@ const SiloCard = new GenericCard({
         },
         movement: {
           distance: 2,
-          direction: "Adjacent",
+          direction: adjacentRanges,
         },
         attacks: [
           {
             name: "Kick",
             range: {
               distance: 1,
-              direction: "Adjacent",
+              direction: adjacentRanges,
             },
             damage: {
               type: "d4",
@@ -399,7 +408,7 @@ class CardPrinter {
       </div>
       <div class='health'><span class="bold">Health</span>${health}</div>
       <div class='movement'><span class="bold">Movement</span> ${movement}</div>
-      <div class='attack'><span class="bold">Attack</span>${attack}</div>
+      <div class='attack'><span class="bold">Attacks</span>${attack}</div>
       <div class='passive'><span class="bold">Passive</span>${card.passive||"none"}</div>
       <div class='ability'><span class="bold">Ability</span>${ability}</div>
       <div class='uses'><span class="bold">Uses</span>${card.uses}</div>
