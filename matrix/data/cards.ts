@@ -20,10 +20,10 @@ type Rarity =
   type RangeDirections = "←" | "↑" | "→" | "↓" | "↖" | "↗" | "↘" | "↙";
   type RangeDirection = RangeDirections | Array<RangeDirections>;
 
-  const orthogonalRanges: RangeDirections[] = ["←", "↑", "→", "↓"];
-  const diagonalRanges: RangeDirections[] = ["↖", "↗", "↘", "↙"];
+  const orthogonalRanges: RangeDirections[] = ["←", "↑", "↓", "→"];
+  const diagonalRanges: RangeDirections[] = ["↖", "↙", "↗", "↘"];
   const adjacentRanges: RangeDirections[] = orthogonalRanges.concat(diagonalRanges);
-  const forwardRanges: RangeDirections[] = ["↑", "↖", "↗"];
+  const forwardRanges: RangeDirections[] = ["↖", "↑", "↗"];
 
 
 type Movement = {
@@ -137,14 +137,14 @@ const ScarecrowCard = new GenericCard({
   health: 6,
   movement: {
     distance: 1,
-    direction: forwardRanges,
+    direction: orthogonalRanges,
   },
   attacks: [
     {
       name: "Crow Launch",
       range: {
         distance: 1,
-        direction: orthogonalRanges,
+        direction: forwardRanges,
       },
       damage: 1,
     },
@@ -343,7 +343,8 @@ class CardPrinter {
 
   printMovement(movement?: Movement) {
     if (!movement) return NONE;
-    return `${movement.direction}:${movement.distance}`
+    const direction = this.printDirection(movement.direction);
+    return `${direction}:${movement.distance}`
   }
 
   printDamageBonus(dice?: DamageBonus) {
@@ -377,12 +378,19 @@ class CardPrinter {
       return attack.map(a => this.printAttack(a)).join("</br>")
     } else {
     const damage = this.printDamage(attack.damage);
+    const direction = this.printDirection(attack.range.direction);
     return `
     <i>${attack.name}</i>, 
-    ${attack.range.direction}: ${attack.range.distance},
+    <div class="directions">${direction}</div>: ${attack.range.distance},
     ${damage} 
     ${attack.notes ? ", " + attack.notes:""}`
     }
+  }
+
+  printDirection(direction: string | RangeDirections[]): string {
+    if (!direction) return NONE;
+    if (typeof direction === "string") return `<div class="direction ${direction}">${direction}</div>`;
+    return direction.map(d => this.printDirection(d)).join("");
   }
   
   printUpgrades(upgrades?: Array<Upgrade>) {

@@ -62,10 +62,64 @@
     }
 
     .cards {
+      font-size: smaller;
       width: 8.5in;
       height: 11in;
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .directions {
+      display: inline-block;
+      position: relative;
+      top:0.5rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      font-size: 0.5rem;
+    }
+
+    .direction {
+      --offset: 0.25rem;
+      --_offset: -0.25rem;
+      position: absolute;
+      top: 0rem;
+      left: 0rem;
+      width: 1rem;
+      height: 1rem;
+      text-align: center;
+      line-height: 1rem;
+    }
+
+    .direction.↑ {
+      transform: translateY(var(--_offset));
+    }
+
+    .direction.↓ {
+      transform: translateY(var(--offset));
+    }
+
+    .direction.← {
+      transform: translateX(var(--_offset));
+    }
+
+    .direction.→ {
+      transform: translateX(var(--offset));
+    }
+
+    .direction.↖ {
+      transform: translate(var(--_offset), var(--_offset));
+    }
+
+    .direction.↗ {
+      transform: translate(var(--offset), var(--_offset));
+    }
+
+    .direction.↙ {
+      transform: translate(var(--_offset), var(--offset));
+    }
+
+    .direction.↘ {
+      transform: translate(var(--offset),var(--offset));
     }
   </style>
 </head>
