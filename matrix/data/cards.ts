@@ -17,13 +17,13 @@ type Rarity =
   | "Mythic"
   | "Uncommon+"
 
-  type RangeDirections = "←" | "↑" | "→" | "↓" | "↖" | "↗" | "↘" | "↙";
-  type RangeDirection = RangeDirections | Array<RangeDirections>;
+type RangeDirections = "←" | "↑" | "→" | "↓" | "↖" | "↗" | "↘" | "↙";
+type RangeDirection = RangeDirections | Array<RangeDirections>;
 
-  const orthogonalRanges: RangeDirections[] = ["←", "↑", "↓", "→"];
-  const diagonalRanges: RangeDirections[] = ["↖", "↙", "↗", "↘"];
-  const adjacentRanges: RangeDirections[] = orthogonalRanges.concat(diagonalRanges);
-  const forwardRanges: RangeDirections[] = ["↖", "↑", "↗"];
+const orthogonalRanges: RangeDirections[] = ["←", "↑", "↓", "→"];
+const diagonalRanges: RangeDirections[] = ["↖", "↙", "↗", "↘"];
+const adjacentRanges: RangeDirections[] = orthogonalRanges.concat(diagonalRanges);
+const forwardRanges: RangeDirections[] = ["↖", "↑", "↗"];
 
 
 type Movement = {
@@ -334,7 +334,7 @@ class CardPrinter {
     if (!health) return NONE;
     if (typeof health == "string") return health;
     if (typeof health == "number") return health;
-    const typedHealth = health as {type: string; bonus: number};
+    const typedHealth = health as { type: string; bonus: number };
     if (typedHealth.type) {
       return this.printDamageBonus(health)
     }
@@ -344,7 +344,7 @@ class CardPrinter {
   printMovement(movement?: Movement) {
     if (!movement) return NONE;
     const direction = this.printDirection(movement.direction);
-    return `${direction}:${movement.distance}`
+    return `<div class="directions">${direction}</div>:${movement.distance}`
   }
 
   printDamageBonus(dice?: DamageBonus) {
@@ -359,8 +359,8 @@ class CardPrinter {
     switch (damage.type) {
       case "summon":
         return `${this.printSummon(damage)}`;
-        default:
-          return `Damage: ${this.printDamageBonus(damage)}`;
+      default:
+        return `Damage: ${this.printDamageBonus(damage)}`;
     }
   }
   printSummon(damage: Damage) {
@@ -369,21 +369,26 @@ class CardPrinter {
     const health = this.printHealth(damage.health);
     const movement = this.printMovement(damage.movement);
     const attack = this.printAttack(damage.attacks);
-    return `<br/>Health: ${health}, Movement: ${movement}, Attack: ${attack},`
+    return `<br/>
+    Health: ${health}, 
+    Movement: ${movement}, 
+    Attack: ${attack}`
   }
 
-  printAttack(attack?: Attack | Attack[]): string {    
+  printAttack(attack?: Attack | Attack[]): string {
     if (!attack) return "none"
     if (Array.isArray(attack)) {
-      return attack.map(a => this.printAttack(a)).join("</br>")
+      return attack.map(a => this.printAttack(a)).join("")
     } else {
-    const damage = this.printDamage(attack.damage);
-    const direction = this.printDirection(attack.range.direction);
-    return `
-    <i>${attack.name}</i>, 
-    <div class="directions">${direction}</div>: ${attack.range.distance},
-    ${damage} 
-    ${attack.notes ? ", " + attack.notes:""}`
+      const damage = this.printDamage(attack.damage);
+      const direction = this.printDirection(attack.range.direction);
+      return `
+    <div class="attack">
+      <span class="label">${attack.name}</span>, 
+      <div class="directions">${direction}</div>: ${attack.range.distance},
+      ${damage} 
+      ${attack.notes ? (", " + attack.notes) : ""}
+    </div>`
     }
   }
 
@@ -392,7 +397,7 @@ class CardPrinter {
     if (typeof direction === "string") return `<div class="direction ${direction}">${direction}</div>`;
     return direction.map(d => this.printDirection(d)).join("");
   }
-  
+
   printUpgrades(upgrades?: Array<Upgrade>) {
     if (!upgrades?.length) return "none";
     return upgrades?.map(upgrade => `${upgrade.with} → ${upgrade.become}`)
@@ -401,11 +406,11 @@ class CardPrinter {
   print(card: GenericCard) {
     const health = this.printHealth(card.health);
     const movement = this.printMovement(card.movement!)
-    const attack = this.printAttack(card.attacks||[]);
+    const attack = this.printAttack(card.attacks || []);
     const ability = this.printAbility(card.ability);
     const upgrades = this.printUpgrades(card.upgrades);
 
-    const cardClass = card.rarity?.includes("+") ? "plus": "standard";
+    const cardClass = card.rarity?.includes("+") ? "plus" : "standard";
 
     const template = `
     <div class='card'>
@@ -416,8 +421,8 @@ class CardPrinter {
       </div>
       <div class='health'><span class="bold">Health</span>${health}</div>
       <div class='movement'><span class="bold">Movement</span> ${movement}</div>
-      <div class='attack'><span class="bold">Attacks</span>${attack}</div>
-      <div class='passive'><span class="bold">Passive</span>${card.passive||"none"}</div>
+      <div class='attacks'><span class="bold">Attacks</span>${attack}</div>
+      <div class='passive'><span class="bold">Passive</span>${card.passive || "none"}</div>
       <div class='ability'><span class="bold">Ability</span>${ability}</div>
       <div class='uses'><span class="bold">Uses</span>${card.uses}</div>
       <div class='upgrades'><span class="bold">Upgrades</span>${upgrades}</div>
@@ -436,11 +441,11 @@ class CardPrinter {
 }
 
 export const farmPack = [
-FarmerCard, ScarecrowCard, JackOLanternCard, 
-SiloCard, TractorCard, TractorRiderCard
+  FarmerCard, ScarecrowCard, JackOLanternCard,
+  SiloCard, TractorCard, TractorRiderCard
 ]
 
-export function print(target:HTMLElement, cards = farmPack) {
+export function print(target: HTMLElement, cards = farmPack) {
   const printer = new CardPrinter(target);
   cards.forEach(c => printer.print(c));
 }

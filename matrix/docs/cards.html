@@ -62,7 +62,7 @@
     }
 
     .cards {
-      font-size: smaller;
+      font-size: 1rem;
       width: 8.5in;
       height: 11in;
       display: grid;
@@ -120,6 +120,18 @@
 
     .direction.↘ {
       transform: translate(var(--offset),var(--offset));
+    }
+
+    .attack {
+      display: block;
+    }
+    
+    .attack > .label {
+      font-style: italic;
+    }
+
+    .attack .attack > .label {
+      font-style: normal;
     }
   </style>
 </head>
