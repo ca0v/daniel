@@ -10,6 +10,95 @@
       padding: 0;
     }
 
+    .center {
+      text-align: center;
+    }
+
+    .larger {
+      font-size: larger;
+    }
+
+    .tokens {
+      display: flex;
+      flex-wrap: wrap;
+      width: 8.5in;
+      height: 11in;
+      /* center within container */
+      justify-content: center;
+    }
+
+    .token {
+      font-size: 0.75rem;
+      outline: 1px dotted black;
+      width: 1in;
+      height: 1in;
+      overflow: hidden;
+    }
+
+    .token .label {
+      display: block;
+      font-weight: bold;
+      padding-left: 0.2rem;
+    }
+
+    .token .value {
+      display: block;
+      padding-left: 0.4rem;
+    }
+
+    .token > .value > .directions  {
+      display: inline-block;
+      position: relative;
+      top:0.5rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      font-size: 0.5rem;
+    }
+
+    .token > .value > .directions > .direction {
+      --offset: 0.25rem;
+      --_offset: -0.25rem;
+      font-size: smaller;
+      position: absolute;
+      top: 0rem;
+      left: 0rem;
+      width: 1rem;
+      height: 1rem;
+      text-align: center;
+      line-height: 1rem;
+    }
+
+    .direction.↑ {
+      transform: translateY(var(--_offset));
+    }
+
+    .direction.↓ {
+      transform: translateY(var(--offset));
+    }
+
+    .direction.← {
+      transform: translateX(var(--_offset));
+    }
+
+    .direction.→ {
+      transform: translateX(var(--offset));
+    }
+
+    .direction.↖ {
+      transform: translate(var(--_offset), var(--_offset));
+    }
+
+    .direction.↗ {
+      transform: translate(var(--offset), var(--_offset));
+    }
+
+    .direction.↙ {
+      transform: translate(var(--_offset), var(--offset));
+    }
+
+    .direction.↘ {
+      transform: translate(var(--offset),var(--offset));
+    }    
 
   </style>
 </head>
