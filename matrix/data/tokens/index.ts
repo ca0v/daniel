@@ -1,13 +1,29 @@
 const NONE = "none";
 
 import { farmPack } from "../cards/farmpack.js";
-import { DamageBonus, Health, Movement, RangeDirections } from "../cards/pack_base.js";
+import type { DamageBonus, Health, Movement, RangeDirections } from "../cards/pack_base.js";
 
 const farmTokens = farmPack.map(c => ({
     name: c.name,
     health: c.health,
     movement: c.movement,
 }));
+
+farmPack.forEach(p => {
+    p.attacks?.forEach(attack => {
+        const damage = attack.damage;
+        if (!damage) return;
+        if (typeof damage === "number") return;
+        if (damage.type !== "summon") return;
+        const health = damage.health;
+        const movement = damage.movement;
+        farmTokens.push({
+            name: attack.name,
+            health,
+            movement,
+        });
+    });
+});
 
 type Token =  {
     name: string | undefined;
@@ -18,7 +34,7 @@ type Token =  {
 
 export function run() {
     const printer = new TokenPrinter(document.querySelector("body")!);
-    printer.print(farmTokens);
+    printer.print([...farmTokens,...farmTokens, ...farmTokens,...farmTokens, ...farmTokens,...farmTokens, ...farmTokens,...farmTokens, ...farmTokens,...farmTokens]);
 }
 
 class TokenPrinter {
@@ -36,7 +52,7 @@ class TokenPrinter {
 
         return `
         <div class="token">
-        <span class="label value center larger">${name}</span>
+        <span class="label value center larger underline">${name}</span>
         <span class="label">Health:</span><span class="value">${health}</span>
         <span class="label">Movement:</span><span class="value">${movement}</span>
         </div>
