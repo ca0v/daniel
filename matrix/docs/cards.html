@@ -138,8 +138,8 @@
 
 <body>
   <script type="module">
-    import { print } from "../data/cards.js"
-    print(document.querySelector(".cards"));
+    import { print, farmPack, militiaPack } from "../data/cards/cards.js"
+    print(document.querySelector(".cards"), militiaPack);
   </script>
   <div class="cards"></div>
 </body>

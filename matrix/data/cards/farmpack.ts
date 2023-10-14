@@ -1,76 +1,4 @@
-const NONE = 'none';
-
-type Attack = {
-  name: string
-  range: Movement
-  damage: Damage
-  notes?: string
-}
-
-type Dice = "d4" | "d6" | "d8" | "d10" | "d12" | "d20" | "d100"
-type Rarity =
-  | "Common"
-  | "Uncommon"
-  | "Rare"
-  | "Epic"
-  | "Legendary"
-  | "Mythic"
-  | "Uncommon+"
-
-type RangeDirections = "←" | "↑" | "→" | "↓" | "↖" | "↗" | "↘" | "↙";
-type RangeDirection = RangeDirections | Array<RangeDirections>;
-
-const orthogonalRanges: RangeDirections[] = ["←", "↑", "↓", "→"];
-const diagonalRanges: RangeDirections[] = ["↖", "↙", "↗", "↘"];
-const adjacentRanges: RangeDirections[] = orthogonalRanges.concat(diagonalRanges);
-const forwardRanges: RangeDirections[] = ["↖", "↑", "↗"];
-
-
-type Movement = {
-  distance: number | "Touch"
-  direction: RangeDirection
-}
-
-type DamageBonus = {
-  type: Dice | Array<Dice>
-  bonus: number
-}
-
-type Damage =
-  | number
-  | {
-    type: "summon"
-    name: string
-    health: Health
-    movement: Movement
-    attacks: Array<Attack>
-  }
-  | DamageBonus
-
-type Formula = string
-
-type Health =
-  | number
-  | Formula
-  | DamageBonus
-
-type Upgrade = { with: string; become: string };
-
-class GenericCard {
-  name?: string
-  rarity?: Rarity
-  health?: Health
-  movement?: null | Movement
-  attacks?: null | Array<Attack>
-  passive?: null | string
-  ability?: null | string | Attack
-  uses?: number
-  upgrades?: Array<Upgrade>
-
-  constructor(state: Partial<GenericCard>) {
-    Object.assign(this, state)
-  }
-}
+import {GenericCard, Health, Movement, DamageBonus, Damage, Attack, Upgrade, RangeDirections, orthogonalRanges, adjacentRanges, diagonalRanges, forwardRanges, NONE} from "./pack_base.js";
 
 const FarmerCard = new GenericCard({
   name: "Farmer",
@@ -173,7 +101,8 @@ const TractorCard = new GenericCard({
       damage: {
         type: "d4",
         bonus: 0,
-      },
+      }, 
+      notes: "Pushes token back one space. If token is not able to be pushed: backed into a wall or Castle Card then it is dealt + 1 damage."
     },
   ],
   passive: "Can be pushed in any direction by a Friendly Card",

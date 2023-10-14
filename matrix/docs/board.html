@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Home</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .bold {
+      display: block;
+      font-weight: 1000;
+      width: 6rem;
+      margin-top: 0.5rem;
+    }
+
+    .bold::after {
+      content: ""
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(11, 1fr);
+      gap: 0px;
+      margin-right: 0.5in;
+      width: 8in;
+      height: 11in;
+    }
+
+    .grid>.box {
+      border: 1px solid black;
+      width: 1in;
+      height: 1in;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 4rem;
+      font-family: "Times New Roman", Times, serif;
+      color: #000;
+      box-sizing: border-box;
+    }
+
+    .grid>.box[data-row="5"] {
+      background-color: #f0f0f0;
+    }
+
+    .grid>.box[data-row="2"],
+    .grid>.box[data-row="7"] {
+      border-bottom: 3px solid black;
+    }
+
+    .grid>.box[data-row="0"][data-col="2"],
+    .grid>.box[data-row="0"][data-col="3"],
+    .grid>.box[data-row="0"][data-col="4"],
+    .grid>.box[data-row="0"][data-col="5"] {
+      background-color: #f0f0f0;
+      border-bottom: 3px solid black;
+    }
+
+    .grid>.box[data-row="10"][data-col="2"],
+    .grid>.box[data-row="10"][data-col="3"],
+    .grid>.box[data-row="10"][data-col="4"],
+    .grid>.box[data-row="10"][data-col="5"] {
+      background-color: #f0f0f0;
+      border-top: 3px solid black;
+      font-size: 2rem;
+    }
+
+    .grid>.box[data-row="0"][data-col="2"] {
+      border-left: 3px solid black;
+    }
+
+    .grid>.box[data-row="0"][data-col="5"] {
+      border-right: 3px solid black;
+    }
+
+    .grid>.box[data-row="10"][data-col="2"] {
+      border-left: 3px solid black;
+    }
+
+    .grid>.box[data-row="10"][data-col="5"] {
+      border-right: 3px solid black;
+    }
+
+    .board {
+      position: relative;
+      width: 8.5in;
+      height: 11in;
+      border: 1px solid rgb(0, 0, 0);
+    }
+
+    .trademark {
+      position: absolute;
+      bottom: 0in;
+      right: 0in;
+      font-size: 2rem;
+      border-right: 2px solid black;
+      border-left: 2px solid black;
+      border-top: 2px solid black;
+      border-bottom: 2px solid black;
+    }
+
+    .trademark>.box {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="board">
+    <div class="grid"></div>
+  </div>
+  <script>
+    function setBoxText(row, col, text) {
+      const box = document.querySelector(
+        `[data-row="${row}"][data-col="${col}"]`
+      )
+      if (!box) throw new Error(`No box at row ${row} col ${col}`)
+      box.innerHTML = text
+    }
+
+    const grid = document.querySelector(".grid")
+    for (let row = 0; row < 11; row++) {
+      for (let col = 0; col < 8; col++) {
+        const div = document.createElement("div")
+        div.classList.add("box")
+        grid.appendChild(div)
+        div.dataset.row = row
+        div.dataset.col = col
+      }
+    }
+
+    "MATRIX".split("").forEach((letter, index) => {
+      setBoxText(5, index + 1, letter)
+    })
+  </script>
+</body>
+
+</html>
